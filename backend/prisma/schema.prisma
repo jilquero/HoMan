@@ -1,0 +1,155 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// generator zod {
+//   provider = "prisma-zod-generator"
+// }
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  username  String   @unique
+  password  String
+  firstName String?
+  lastName  String?
+  image     String?
+  phone     String?
+  contexts  Context[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Warehouse {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  icon      String
+  name      String
+  products  WarehoueProduct[]
+  contexts  Context[]
+  roles     Role[]
+  history   History[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WarehoueProduct {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  productId         String?   @db.ObjectId
+  image             String?
+  name              String
+  description       String?
+  barcode           String?
+  tags              Tag[]
+  quantity          Int       @default(0)
+  minimumQuantity   Int?
+  preferredQuantity Int?
+  warehouse         Warehouse @relation(fields: [warehouseId], references: [id])
+  warehouseId       String    @db.ObjectId
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Context {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  status      Status          @default(PENDING)
+  warehouse   Warehouse       @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  warehouseId String          @db.ObjectId
+  user        User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId      String?         @db.ObjectId
+  roles       ContextRole[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model ContextRole {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  context   Context  @relation(fields: [contextId], references: [id], onDelete: Cascade)
+  contextId String   @db.ObjectId
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model History {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  action      String
+  targetId    String?   @db.ObjectId
+  targetType  TargetType
+  quantity    Int?
+  contextId   String    @db.ObjectId
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  warehouseId String    @db.ObjectId
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  image       String
+  name        String
+  description String
+  barcode     String?
+  tags        Tag[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum Tag {
+  VEGETABLES
+  FRUITS
+  CLOTHES
+  SHOES
+  BAGS
+  ACCESSORIES
+  ELECTRONICS
+  FURNITURE
+  BOOKS
+  OTHERS
+}
+
+model Role {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  name        String        @unique
+  permissions Permission[]
+  warehouse   Warehouse     @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  warehouseId String        @db.ObjectId
+  roles       ContextRole[]
+  contextId   String?       @db.ObjectId
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  PENDING
+}
+
+enum TargetType {
+  PRODUCT
+  WAREHOUSE
+  CONTEXT
+}
+
+enum Permission {
+  READ_PRODUCTS
+  WRITE_PRODUCTS
+  DELETE_PRODUCTS
+  READ_WAREHOUSES
+  WRITE_WAREHOUSES
+  DELETE_WAREHOUSES
+  READ_CONTEXTS
+  WRITE_CONTEXTS
+  DELETE_CONTEXTS
+  READ_HISTORY
+  READ_STATISTICS
+}
