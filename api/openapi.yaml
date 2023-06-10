@@ -1,0 +1,1028 @@
+openapi: "3.0.3"
+info:
+  title: API Title
+  version: "1.0"
+servers:
+  - url: http://localhost:3000
+    description: Local server
+tags:
+  - name: auth
+    description: Authentication
+  - name: users
+    description: User management
+  - name: warehouses
+    description: Warehouse management
+  - name: products
+    description: Product management
+paths:
+  /ping:
+    get:
+      summary: Checks if the server is running
+      operationId: ping
+      security: []
+      responses:
+        "200":
+          description: Server is up and running
+        default:
+          description: Something is wrong
+  /auth/login:
+    post:
+      summary: ""
+      operationId: login
+      description: ""
+      tags:
+        - auth
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Credentials"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+  /auth/logout:
+    post:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: logout
+      description: ""
+      tags:
+        - auth
+      parameters: []
+      responses:
+        "200":
+          description: OK
+  /users:
+    post:
+      summary: ""
+      operationId: createUser
+      description: ""
+      tags:
+        - users
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewUser"
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+                format: uri
+                description: URL of the new resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /users/me:
+    get:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: getLoggedInUser
+      description: ""
+      tags:
+        - users
+      parameters: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /users/{userId}:
+    get:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: getUser
+      description: ""
+      tags:
+        - users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    patch:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: updateUser
+      description: ""
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EditUser"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Warehouse"
+    delete:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: deleteUser
+      description: ""
+      tags:
+        - users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+  /warehouses:
+    post:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: createWarehouse
+      description: ""
+      tags:
+        - warehouses
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewWarehouse"
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+                format: uri
+                description: URL of the new resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Warehouse"
+  /warehouses/{warehouseId}:
+    get:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: getWarehouse
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Warehouse"
+    patch:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: updateWarehouse
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EditWarehouse"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Warehouse"
+    delete:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: deleteWarehouse
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+  /warehouses/{warehouseId}/products:
+    get:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: getWarehouseProducts
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WarehouseProduct"
+    post:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: addWarehouseProduct
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewWarehouseProduct"
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+                format: uri
+                description: URL of the new resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WarehouseProduct"
+  /warehouses/{warehouseId}/products/{productId}:
+    patch:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: updateWarehouseProduct
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EditWarehouseProduct"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WarehouseProduct"
+    delete:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: deleteWarehouseProduct
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+  /warehouses/{warehouseId}/contexts:
+    get:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: getWarehouseContexts
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Context"
+    post:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: addWarehouseContext
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewContext"
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+                format: uri
+                description: URL of the new resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Context"
+  /warehouses/{warehouseId}/contexts/{contextId}:
+    patch:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: updateWarehouseContext
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: contextId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EditContext"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Context"
+  /warehouses/{warehouseId}/contexts/{contextId}/accept:
+    post:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: acceptWarehouseContext
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: contextId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Context"
+  /warehouses/{warehouseId}/contexts/{contextId}/leave:
+    post:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: leaveWarehouseContext
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: contextId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Left
+          content:
+            application/json:
+              schema:
+                type: string
+  /warehouses/{warehouseId}/history:
+    get:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: getWarehouseHistory
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/History"
+  /warehouses/{warehouseId}/statistics:
+    get:
+      security:
+        - bearerAuth: []
+      summary: ""
+      operationId: getWarehouseStatistics
+      description: ""
+      tags:
+        - warehouses
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+  /products:
+    get:
+      summary: ""
+      operationId: getProducts
+      description: ""
+      tags:
+        - products
+      parameters: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+  /products/{productId}:
+    get:
+      summary: ""
+      operationId: getProduct
+      description: ""
+      tags:
+        - products
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: AuthCookie
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 6462b1a8c519bac6e2543c66
+        image:
+          type: string
+        username:
+          type: string
+          minLength: 2
+          maxLength: 30
+        firstName:
+          type: string
+          minLength: 2
+          maxLength: 30
+        lastName:
+          type: string
+          minLength: 2
+          maxLength: 30
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        contexts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Context"
+      required:
+        - id
+        - username
+        - email
+        - contexts
+    NewUser:
+      type: object
+      properties:
+        image:
+          type: string
+        username:
+          type: string
+          minLength: 2
+          maxLength: 30
+        firstName:
+          type: string
+          minLength: 2
+          maxLength: 30
+        lastName:
+          type: string
+          minLength: 2
+          maxLength: 30
+        email:
+          type: string
+          format: email
+          minLength: 2
+          maxLength: 30
+          example: email@wp.pl
+        password:
+          type: string
+          example: admin
+        phone:
+          type: string
+      required:
+        - username
+        - email
+        - password
+    EditUser:
+      type: object
+      properties:
+        image:
+          type: string
+        username:
+          type: string
+          minLength: 2
+          maxLength: 30
+        firstName:
+          type: string
+          minLength: 2
+          maxLength: 30
+        lastName:
+          type: string
+          minLength: 2
+          maxLength: 30
+        email:
+          type: string
+          format: email
+          minLength: 2
+          maxLength: 30
+        password:
+          type: string
+          minLength: 2
+          maxLength: 30
+        phone:
+          type: string
+      minProperties: 1
+    Credentials:
+      type: object
+      properties:
+        email:
+          type: string
+          example: email@wp.pl
+        password:
+          type: string
+          example: admin
+      required:
+        - email
+        - password
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+    Warehouse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 6462b1a9c519bac6e2543c67
+        icon:
+          type: string
+        name:
+          type: string
+          minLength: 2
+          maxLength: 30
+      required:
+        - id
+        - name
+        - products
+        - contexts
+    NewWarehouse:
+      type: object
+      properties:
+        icon:
+          type: string
+        name:
+          type: string
+          minLength: 2
+          maxLength: 30
+      required:
+        - name
+    EditWarehouse:
+      type: object
+      properties:
+        icon:
+          type: string
+        name:
+          type: string
+          minLength: 2
+          maxLength: 30
+      minProperties: 1
+    History:
+      type: object
+      properties:
+        id:
+          type: string
+        action:
+          type: string
+        target:
+          type: object
+          oneOf:
+            - type: object
+              properties:
+                productId:
+                  type: string
+            - type: object
+              properties:
+                contextId:
+                  type: string
+            - type: object
+              properties:
+                warehouseId:
+                  type: string
+        contextId:
+          type: string
+        date:
+          type: string
+          format: date-time
+      required:
+        - id
+        - action
+        - target
+        - contextId
+        - date
+    WarehouseProduct:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 646925a1696fc186774d7d6d
+        image:
+          type: string
+        name:
+          type: string
+          minLength: 2
+          maxLength: 30
+        description:
+          type: string
+          minLength: 2
+          maxLength: 30
+        barcode:
+          type: string
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        quantity:
+          type: integer
+          minimum: 0
+        minimumQuantity:
+          type: integer
+          minimum: 0
+        preferredQuantity:
+          type: integer
+          minimum: 0
+      required:
+        - id
+        # - productId
+        - image
+        - name
+        - description
+        - tags
+        - barcode
+        - quantity
+    NewWarehouseProduct:
+      type: object
+      properties:
+        image:
+          type: string
+        name:
+          type: string
+          minLength: 2
+          maxLength: 30
+        description:
+          type: string
+          minLength: 2
+          maxLength: 30
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        barcode:
+          type: string
+        quantity:
+          type: integer
+          minimum: 0
+        minimumQuantity:
+          type: integer
+          minimum: 0
+        preferredQuantity:
+          type: integer
+          minimum: 0
+      anyOf:
+        - required:
+            - image
+            - name
+            - description
+            - tags
+            - barcode
+            - quantity
+    EditWarehouseProduct:
+      type: object
+      properties:
+        image:
+          type: string
+        name:
+          type: string
+          minLength: 2
+          maxLength: 30
+        description:
+          type: string
+          minLength: 2
+          maxLength: 30
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        quantity:
+          type: integer
+          minimum: 0
+        minimumQuantity:
+          type: integer
+          minimum: 0
+        preferredQuantity:
+          type: integer
+          minimum: 0
+      minProperties: 1
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 6462b1a9c519bac6e2543c69
+        image:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        barcode:
+          type: string
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+      required:
+        - id
+        - image
+        - name
+        - description
+        - barcode
+        - tags
+    Tag:
+      type: string
+      enum:
+        - VEGETABLES
+        - FRUITS
+        - MEAT
+        - FISH
+        - MILK
+        - BREAD
+        - SWEETS
+        - DRINKS
+    Context:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 6462b1a9c519bac6e2543c68
+        userId:
+          type: string
+          format: uuid
+        username:
+          type: string
+        warehouseId:
+          type: string
+          format: uuid
+        warehouse:
+          type: string
+        status:
+          $ref: "#/components/schemas/ContextStatus"
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/Role"
+      required:
+        - id
+        - userId
+        - warehouseId
+        - roles
+    NewContext:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        roles:
+          type: array
+          items:
+            type: string
+      required:
+        - userId
+        - roles
+    EditContext:
+      type: object
+      properties:
+        roles:
+          type: array
+          items:
+            type: string
+        status:
+          $ref: "#/components/schemas/ContextStatus"
+      minProperties: 1
+    ContextStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+        - PENDING
+    Role:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 2
+          maxLength: 30
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Permission"
+          format: uuid
+    Permission:
+      type: string
+      enum:
+        - READ_PRODUCTS
+        - WRITE_PRODUCTS
+        - DELETE_PRODUCTS
+        - READ_WAREHOUSES
+        - WRITE_WAREHOUSES
+        - DELETE_WAREHOUSES
+        - READ_CONTEXTS
+        - WRITE_CONTEXTS
+        - DELETE_CONTEXTS
+        - READ_HISTORY
+        - READ_STATISTICS
