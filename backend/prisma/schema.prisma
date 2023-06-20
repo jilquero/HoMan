@@ -51,7 +51,7 @@ model WarehoueProduct {
   quantity          Int       @default(0)
   minimumQuantity   Int?
   preferredQuantity Int?
-  warehouse         Warehouse @relation(fields: [warehouseId], references: [id])
+  warehouse         Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
   warehouseId       String    @db.ObjectId
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
@@ -92,16 +92,16 @@ model History {
   updatedAt   DateTime  @updatedAt
 }
 
-model Product {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  image       String
-  name        String
-  description String
-  barcode     String?
-  tags        Tag[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
+// model Product {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   image       String
+//   name        String
+//   description String
+//   barcode     String?
+//   tags        Tag[]
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+// }
 
 enum Tag {
   VEGETABLES

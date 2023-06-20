@@ -51,8 +51,8 @@ async function addSessionData(
  * Remove cookie
  */
 function clearCookie(res: Response): Response {
-  const { Key, Options } = EnvVars.CookieProps;
-  return res.clearCookie(Key, Options);
+  const { Key } = EnvVars.CookieProps;
+  return res.clearCookie(Key);
 }
 
 // **** Helper Functions **** //

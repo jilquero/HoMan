@@ -7,6 +7,7 @@
 export default {
   NodeEnv: process.env.NODE_ENV ?? "",
   Port: process.env.PORT ?? 0,
+  OpenApiSpec: process.env.OPEN_API_SPEC ?? "",
   CookieProps: {
     Key: "AuthCookie",
     Secret: process.env.COOKIE_SECRET ?? "",

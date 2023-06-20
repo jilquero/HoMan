@@ -7,6 +7,17 @@ async function getByEmail(email: string) {
     where: {
       email: email,
     },
+    include: {
+      contexts: {
+        include: {
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      },
+    },
   });
   // return userValidationSchema.nullable().parse(user);
   return user;
@@ -18,7 +29,15 @@ async function getById(id: string) {
       id: id,
     },
     include: {
-      contexts: true,
+      contexts: {
+        include: {
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      },
     },
   });
   // return userValidationSchema.nullable().parse(user)
@@ -28,6 +47,17 @@ async function getById(id: string) {
 async function create(data: NewUser) {
   const user = await prisma.user.create({
     data: data,
+    include: {
+      contexts: {
+        include: {
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      },
+    },
   });
   // return userValidationSchema.parse(user);
   return user;
@@ -39,6 +69,17 @@ async function update(id: string, data: EditUser) {
       id: id,
     },
     data: data,
+    include: {
+      contexts: {
+        include: {
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      },
+    },
   });
   // return userValidationSchema.nullable().parse(user);
   return user;

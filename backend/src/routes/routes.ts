@@ -9,11 +9,13 @@ import {
 } from "../handlers/AuthHandler";
 import { errorHandlers } from "../handlers/ErrorHandler";
 import { healthcheckHandlers } from "../handlers/HealthcheckHandler";
+import EnvVars from "../constants/EnvVars";
 import addFormats from "ajv-formats";
 
 const api = new OpenAPIBackend({
-  definition: "../api/openapi.yaml",
+  definition: EnvVars.OpenApiSpec,
   validate: true,
+  apiRoot: "/api",
   customizeAjv: function customizeAjv(ajv) {
     addFormats(ajv);
     let uuid = {

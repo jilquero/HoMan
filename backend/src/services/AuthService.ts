@@ -19,13 +19,16 @@ async function authN(email: string, password: string) {
 export async function authZ(
   warehouseId: string,
   userId: string,
-  permission: Permission
+  permission: Permission,
+  needsActive: boolean
 ) {
   const contexts = await WarehouseService.getContexts(warehouseId);
   const context = contexts
     .filter((c) => c.userId === userId)
-    .filter((c) => c.status === "ACTIVE")[0];
-  // Logger.info("context: " + JSON.stringify(context));
+    .filter(
+      (c) => c.status === "ACTIVE" || (c.status === "PENDING" && !needsActive)
+    )[0];
+  Logger.info("context: " + JSON.stringify(context));
   if (!context) {
     return false;
   }

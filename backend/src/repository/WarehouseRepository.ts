@@ -292,14 +292,15 @@ async function addHistory(id: string, data: any) {
 }
 
 async function getHistory(id: string) {
-  return await prisma.warehouse.findUnique({
+  const warehouse = await prisma.warehouse.findUnique({
     where: {
       id: id,
     },
-    select: {
+    include: {
       history: true,
     },
   });
+  return warehouse?.history;
 }
 
 async function getStatistics(id: string) {

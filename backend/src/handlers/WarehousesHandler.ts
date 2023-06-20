@@ -99,7 +99,8 @@ export async function deleteWarehouseProduct(c, req, res) {
 }
 
 export async function addWarehouseContext(c, req, res) {
-  const user = await UserService.getById(c.request.body.userId);
+  const user = await UserService.getByEmail(c.request.body.email);
+  Logger.info("user: " + JSON.stringify(user));
   if (!user) {
     return res.status(400).json({ msg: "Bad Request" });
   }
@@ -115,7 +116,10 @@ export async function addWarehouseContext(c, req, res) {
   }
 
   let newContext: NewWarehouseContext =
-    newWarehouseContextValidationSchema.parse(c.request.body);
+    newWarehouseContextValidationSchema.parse({
+      userId: user.id,
+      roles: c.request.body.roles,
+    });
   newContext.roles = ids;
 
   const warehouse = await WarehouseService.addContext(
@@ -166,7 +170,11 @@ export async function leaveWarehouseContext(c, req, res) {
   const { warehouseId, contextId } = c.request.params;
   const userId = c.user.id;
   const contexts = await WarehouseService.getContexts(warehouseId);
-  const context = contexts.filter((c) => c.userId === userId)[0];
+  Logger.info("contexts: " + JSON.stringify(contexts, null, 2));
+  const context = contexts
+    .filter((c) => c.userId === userId)
+    .filter((c) => c.status !== "INACTIVE")[0];
+  Logger.info("context: " + JSON.stringify(context, null, 2));
   if (!context || context.status !== "ACTIVE") {
     return res.status(403).json({ msg: "Forbidden" });
   }
@@ -228,23 +236,35 @@ export async function getWarehouseStatistics(c, req, res) {
   return res.status(200).json(statistics);
 }
 
-async function authorize(c, req, res, func, permission) {
+async function authorize(c, req, res, func, permission, needsActive = true) {
   const auth = await AuthService.authZ(
     c.request.params.warehouseId,
     c.user.id,
-    permission
+    permission,
+    needsActive
   );
   if (!auth) {
     return res.status(403).json({ msg: "Forbidden" });
   }
 
-  func(c, req, res);
+  try {
+    func(c, req, res);
+  } catch (error) {
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
 }
 
 export const warehousesHandlers = {
   createWarehouse,
   getWarehouse: async (c, req, res) =>
-    authorize(c, req, res, getWarehouse, Permission.enum.READ_WAREHOUSES),
+    authorize(
+      c,
+      req,
+      res,
+      getWarehouse,
+      Permission.enum.READ_WAREHOUSES,
+      false
+    ),
   updateWarehouse: async (c, req, res) =>
     authorize(c, req, res, updateWarehouse, Permission.enum.WRITE_WAREHOUSES),
   deleteWarehouse: async (c, req, res) =>

@@ -1,6 +1,5 @@
 import { EditUser, NewUser } from "../models/User";
 import UserRepository from "../repository/UserRepository";
-import Logger from "../util/Logger";
 import PwdUtil from "../util/PwdUtil";
 import WarehouseService from "./WarehouseService";
 

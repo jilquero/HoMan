@@ -1,8 +1,6 @@
-import { User } from "@prisma/client";
-import Logger from "../util/Logger";
 import AuthService from "../services/AuthService";
-import SessionUtil from "../util/SessionUtil";
 import BearerUtil from "../util/BearerUtil";
+import SessionUtil from "../util/SessionUtil";
 
 export async function requireUserBearer(c) {
   let result = await BearerUtil.getSessionData(c.request);
@@ -41,24 +39,24 @@ export async function login(c, req, res) {
     return res.status(401).json({ msg: "invalid credentials" });
   }
 
-  // res = await SessionUtil.addSessionData(res, {
-  //   id: user.id,
-  //   email: user.email,
-  //   username: user.username,
-  // });
-
-  res = await BearerUtil.addSessionData(res, {
+  res = await SessionUtil.addSessionData(res, {
     id: user.id,
     email: user.email,
     username: user.username,
   });
 
-  return res.status(200);
+  // res = await BearerUtil.addSessionData(res, {
+  //   id: user.id,
+  //   email: user.email,
+  //   username: user.username,
+  // });
+
+  return res.status(200).end();
 }
 
 export async function logout(c, req, res) {
-  // res = await SessionUtil.clearCookie(res);
-  res = await BearerUtil.clearCookie(res);
+  res = await SessionUtil.clearCookie(res);
+  // res = await BearerUtil.clearCookie(res);
   return res.status(200).json({ msg: "logged out" });
 }
 
