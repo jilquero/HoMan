@@ -3,7 +3,7 @@ info:
   title: API Title
   version: "1.0"
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:3000/api
     description: Local server
 tags:
   - name: auth
@@ -50,6 +50,7 @@ paths:
     post:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: logout
       description: ""
@@ -87,10 +88,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+  /users/email:
+    get:
+      summary: ""
+      operationId: checkEmail
+      description: ""
+      tags:
+        - users
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
   /users/me:
     get:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: getLoggedInUser
       description: ""
@@ -108,6 +130,7 @@ paths:
     get:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: getUser
       description: ""
@@ -129,6 +152,7 @@ paths:
     patch:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: updateUser
       description: ""
@@ -156,6 +180,7 @@ paths:
     delete:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: deleteUser
       description: ""
@@ -174,6 +199,7 @@ paths:
     post:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: createWarehouse
       description: ""
@@ -204,6 +230,7 @@ paths:
     get:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: getWarehouse
       description: ""
@@ -225,6 +252,7 @@ paths:
     patch:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: updateWarehouse
       description: ""
@@ -252,6 +280,7 @@ paths:
     delete:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: deleteWarehouse
       description: ""
@@ -270,6 +299,7 @@ paths:
     get:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: getWarehouseProducts
       description: ""
@@ -293,6 +323,7 @@ paths:
     post:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: addWarehouseProduct
       description: ""
@@ -328,6 +359,7 @@ paths:
     patch:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: updateWarehouseProduct
       description: ""
@@ -360,6 +392,7 @@ paths:
     delete:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: deleteWarehouseProduct
       description: ""
@@ -383,6 +416,7 @@ paths:
     get:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: getWarehouseContexts
       description: ""
@@ -406,6 +440,7 @@ paths:
     post:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: addWarehouseContext
       description: ""
@@ -441,6 +476,7 @@ paths:
     patch:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: updateWarehouseContext
       description: ""
@@ -474,6 +510,7 @@ paths:
     post:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: acceptWarehouseContext
       description: ""
@@ -501,6 +538,7 @@ paths:
     post:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: leaveWarehouseContext
       description: ""
@@ -528,6 +566,7 @@ paths:
     get:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: getWarehouseHistory
       description: ""
@@ -552,6 +591,7 @@ paths:
     get:
       security:
         - bearerAuth: []
+        - cookieAuth: []
       summary: ""
       operationId: getWarehouseStatistics
       description: ""
@@ -971,15 +1011,14 @@ components:
     NewContext:
       type: object
       properties:
-        userId:
+        eamil:
           type: string
-          format: uuid
         roles:
           type: array
           items:
             type: string
       required:
-        - userId
+        - email
         - roles
     EditContext:
       type: object
